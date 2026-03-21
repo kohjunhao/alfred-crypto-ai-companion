@@ -71,6 +71,20 @@ def build_docx(source_path: Path, output_path: Path) -> None:
             i += 1
             continue
 
+        image_match = re.match(r"^!\[(.*?)\]\((.+?)\)$", stripped)
+        if image_match:
+            image_path = Path(image_match.group(2)).expanduser()
+            if not image_path.is_absolute():
+                image_path = (source_path.parent / image_path).resolve()
+            if image_path.exists():
+                doc.add_picture(str(image_path), width=Inches(6.5))
+                if image_match.group(1):
+                    caption = doc.add_paragraph()
+                    caption.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    apply_runs(caption, image_match.group(1))
+            i += 1
+            continue
+
         if stripped.startswith("```"):
             i += 1
             block = []

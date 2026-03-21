@@ -3,6 +3,7 @@ from __future__ import annotations
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from functools import lru_cache
+import time
 from typing import Any
 
 import requests
@@ -10,6 +11,7 @@ import requests
 COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 DEFILLAMA_BASE_URL = "https://api.llama.fi"
 REQUEST_TIMEOUT = 10
+MAX_RETRIES = 2
 
 SESSION = requests.Session()
 SESSION.headers.update(
@@ -38,9 +40,20 @@ def _format_money(value: float | int | None) -> str:
 
 
 def _request_json(url: str, params: dict[str, Any] | None = None) -> Any:
-    response = SESSION.get(url, params=params, timeout=REQUEST_TIMEOUT)
-    response.raise_for_status()
-    return response.json()
+    last_error: requests.RequestException | None = None
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            response = SESSION.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as exc:
+            last_error = exc
+            status_code = getattr(exc.response, "status_code", None)
+            is_retryable = status_code == 429 or (status_code is not None and 500 <= status_code < 600)
+            if attempt == MAX_RETRIES or not is_retryable:
+                raise
+            time.sleep(0.6 * (attempt + 1))
+    raise last_error if last_error else RuntimeError("Request failed without an exception")
 
 
 def search_coingecko(entity: str) -> dict[str, Any] | None:

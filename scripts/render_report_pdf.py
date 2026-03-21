@@ -11,6 +11,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
     HRFlowable,
+    Image,
     ListFlowable,
     ListItem,
     PageBreak,
@@ -128,6 +129,21 @@ def build_pdf(source_path: Path, output_path: Path) -> None:
 
         if stripped == "---":
             story.append(PageBreak())
+            i += 1
+            continue
+
+        image_match = re.match(r"^!\[(.*?)\]\((.+?)\)$", stripped)
+        if image_match:
+            image_path = Path(image_match.group(2)).expanduser()
+            if not image_path.is_absolute():
+                image_path = (source_path.parent / image_path).resolve()
+            if image_path.exists():
+                image_flowable = Image(str(image_path))
+                image_flowable._restrictSize(170 * mm, 210 * mm)
+                story.append(image_flowable)
+                if image_match.group(1):
+                    story.append(Paragraph(inline_md(image_match.group(1)), styles["small"]))
+                story.append(Spacer(1, 10))
             i += 1
             continue
 

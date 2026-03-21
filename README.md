@@ -1,5 +1,9 @@
 # Alfred: Your Crypto AI Companion
 
+Public repository:
+
+`https://github.com/kohjunhao/alfred-crypto-ai-companion`
+
 Alfred is a complete CM3070-ready web app built from scratch with:
 
 - Flask backend
@@ -89,6 +93,15 @@ python scripts/run_latency_checks.py
 ```
 
 This writes a CSV file to `evaluation_outputs/latency_results.csv`, which is useful for the Evaluation chapter.
+
+## Run the model comparison scripts
+
+```bash
+python scripts/run_llm_prompt_comparison.py
+python scripts/run_model_comparison.py
+```
+
+These write controlled and live comparison outputs for `llama3` and `qwen2.5:3b` into `evaluation_outputs/`.
 
 ## Notes
 

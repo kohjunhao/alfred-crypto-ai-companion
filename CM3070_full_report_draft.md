@@ -9,6 +9,7 @@
 **Student Number:** 10230839  
 **Date of Submission:** [Update before submission]  
 **Supervisor:** Mr. Chew Jee Loong  
+**Public Code Repository:** https://github.com/kohjunhao/alfred-crypto-ai-companion  
 
 ---
 
@@ -26,7 +27,7 @@ This project addresses that problem through a constrained chatbot called **Alfre
 
 The project also addresses accessibility. Alfred includes two response modes: **Simple Mode** and **Pro Mode**. Simple Mode is intended for novice users who need short explanations in plain language. Pro Mode is intended for users who prefer compact, data-focused responses. Both modes use the same underlying market data, but present it differently according to the user's needs. This means the project is not only concerned with technical correctness, but also with how effectively financial information can be communicated to different user groups.
 
-The project draws inspiration from the financial assistant template discussed in earlier University of London coursework, but adapts it to a crypto-specific setting. The focus is not on automated trading or portfolio execution. Instead, Alfred is an educational and informational assistant that helps users access live market data more safely and clearly.
+The project draws inspiration from **CM3020 Artificial Intelligence, Section 4.2, Project Idea 2: Financial Advisor Bot**, but adapts that template to a crypto-specific setting. The focus is not on automated trading or portfolio execution. Instead, Alfred is an educational and informational assistant that helps users access live market data more safely and clearly.
 
 ## 1.2 Project Aim
 
@@ -94,6 +95,8 @@ This chapter has introduced the motivation for Alfred and defined the main probl
 
 This chapter reviews the literature relevant to Alfred and uses it to justify the project's design choices. The review focuses on five themes. First, the cryptocurrency market is highly vulnerable to misinformation and sentiment-driven behaviour. Second, market data is fragmented across multiple sources and interfaces. Third, standard Large Language Models are unsuitable for real-time financial questions without access to external tools. Fourth, novice users face a barrier to entry because crypto information is often presented in specialist language. Fifth, existing crypto AI products still leave important gaps in transparency, safety, or accessibility.
 
+The literature base combines academic papers, recent surveys, official technical reports, and a small number of industry sources. Where non-academic sources are used, such as TRM Labs or product pages for existing tools, they are treated as market-context evidence rather than the main proof for technical claims. The core technical arguments in this chapter rely mainly on peer-reviewed or preprint research and official model reports.
+
 Taken together, these themes explain why Alfred is designed as a constrained Agentic RAG assistant rather than a general-purpose chatbot or execution agent.
 
 ## 2.2 Vulnerability to Misinformation in Cryptocurrency Markets
@@ -116,7 +119,7 @@ The relevance to Alfred is direct. The project treats aggregation as a core func
 
 The literature on LLMs makes clear that these models are powerful language tools but weak sources of real-time factual truth. OpenAI documentation (2023) confirms that standard pre-trained models do not automatically know current events or live market conditions unless connected to external tools. In a fast-moving financial environment, this limitation is especially serious.
 
-Sert (2025) discusses factual hallucination in financial contexts, where models can generate numbers that sound plausible but are not grounded in current reality. This type of failure is dangerous because it is often not obvious to the user. A hallucinated price may still look reasonable on first reading, which makes it more risky than an obviously broken answer.
+Lee et al. (2024), in a recent survey of Large Language Models in finance, identify hallucination, privacy, and efficiency as continuing obstacles to safe financial use. Sert (2025) discusses factual hallucination in financial contexts, where models can generate numbers that sound plausible but are not grounded in current reality. This type of failure is dangerous because it is often not obvious to the user. A hallucinated price may still look reasonable on first reading, which makes it more risky than an obviously broken answer.
 
 This body of work strongly motivates Alfred's core architecture. In Alfred, the LLM is not asked to remember the current price of Bitcoin or the current TVL of a protocol. Instead, live data is retrieved first, and the model is instructed to work only from that context. This design does not eliminate all possible model failure, but it reduces the scope of the model's job. The model is used to explain and format retrieved data, not to invent unsupported facts.
 
@@ -162,7 +165,7 @@ Retrieval Augmented Generation (RAG) is usually associated with vector databases
 
 For this reason, Alfred uses a narrower but more suitable form of Agentic RAG. Instead of retrieving chunks from a document store, the system first determines which external tool should be called, then retrieves live structured data, and finally uses the model to generate the response. The retrieval step is therefore dynamic and tool-driven rather than document-driven.
 
-This design is important for two reasons. First, it matches the time-sensitive nature of the domain. Second, it reduces the burden on the LLM. The model does not need to choose between many ambiguous sources at generation time, because the routing and retrieval decisions have already been made by the backend.
+This design is important for two reasons. First, it matches the time-sensitive nature of the domain. Second, it reduces the burden on the LLM. The model does not need to choose between many ambiguous sources at generation time, because the routing and retrieval decisions have already been made by the backend. Recent RAG surveys also support this direction. Sharma (2025) argues that modern RAG systems must balance grounding fidelity, efficiency, and robustness. That trade-off is directly relevant to Alfred, because the system needs both factual grounding and practical response speed rather than maximum model creativity.
 
 ## 2.8 Chain of Thought and Prompt Constraint
 
@@ -320,6 +323,8 @@ This design directly supports Research Question 1, since it tests whether the mo
 Running the model locally through Ollama was another deliberate choice. A cloud API may offer lower setup complexity, but local hosting better supports privacy, transparency, and project independence. Since Alfred is intended as a financial assistant, keeping user queries on the local machine is a meaningful ethical and technical advantage.
 
 The trade-off is that local inference may be slower than a hosted service. This is why latency testing forms an important part of the final evaluation. In the final implementation, the local deployment used **Ollama 0.18.2** with **`llama3:latest`**, an **8.0B** parameter **Q4_0** quantised model.
+
+Llama 3 was selected because it is a strong open-weight general model with mature Ollama support and a well-documented technical report (Grattafiori et al., 2024). However, the reviewer's concern that this choice should be justified is valid. For that reason, the final evaluation also includes a comparison against **`qwen2.5:3b`** rather than treating Llama 3 as correct by assumption.
 
 ### 3.6.4 Dual Output Modes
 
@@ -525,7 +530,26 @@ These results suggest that Alfred is comfortably within the project's practical 
 
 During the latency batch, three prompts returned directly from Ollama and three used the deterministic fallback formatter after the response guard rejected the model output. This behaviour is acceptable within the project's aims because the primary goal is safe, grounded communication rather than maximising raw LLM output.
 
-### 5.2.4 Edge Cases and Failure Handling
+### 5.2.4 LLM Comparison: `llama3` vs `qwen2.5:3b`
+
+To respond directly to the reviewer comment that Llama 3 should be justified against another model, an additional comparison was carried out on **21 March 2026**. Two comparison styles were used.
+
+The first was a **controlled prompt comparison** using fixed market snapshots injected directly into the response layer. This removed API noise and allowed the two local models to be compared against the same input data. Four cases were tested: Bitcoin price in Pro mode, Ethereum price in Simple mode, Aave TVL in Pro mode, and Uniswap TVL in Pro mode. The results were written to `evaluation_outputs/llm_prompt_comparison.csv`.
+
+The controlled comparison produced the following summary:
+
+- `llama3`: average response stage **2521.36 ms**, **0/4** direct Ollama acceptances, **4/4** final replies preserved the expected live value
+- `qwen2.5:3b`: average response stage **2977.76 ms**, **1/4** direct Ollama acceptances, **4/4** final replies preserved the expected live value
+
+This result shows two useful points. First, Alfred's guardrail and fallback mechanism worked as intended for both models because the final user-facing reply still retained the injected live value in every controlled case. Second, `qwen2.5:3b` did not provide a clear quality or speed advantage over `llama3` in this project setting. Although Qwen passed the guardrail once where Llama 3 did not, its average response time in the controlled run was higher because of one slower Pro-mode case.
+
+The second comparison was a **live end-to-end batch** through the full Flask application using six prompts. The results were written to `evaluation_outputs/model_comparison_results.csv`. In that live batch, `llama3` recorded an average total response time of **3826.06 ms**, compared with **4103.82 ms** for `qwen2.5:3b`. The corresponding final-reply value retention rates were **66.67%** for `llama3` and **33.33%** for `qwen2.5:3b`. However, these live figures were partly affected by repeated upstream API calls that occasionally returned missing price values, so they should be treated as supplementary rather than the main basis of model selection.
+
+Taken together, the comparison supports a moderate conclusion rather than an absolute one. `llama3` was not chosen because it is universally the best open model. It was chosen because, within Alfred's local undergraduate project scope, it gave a slightly better end-to-end fit across latency, local tooling support, and overall stability during development. The comparison with Qwen therefore strengthens the justification for Llama 3 while also showing that Alfred's safety layer is more important than the raw model alone.
+
+![Figure 5.1. Controlled and live local-model comparison used to justify the final Llama 3 deployment choice.](/Users/kjh/Downloads/CM3070/report_figures/model_comparison.png)
+
+### 5.2.5 Edge Cases and Failure Handling
 
 Edge-case behaviour was also checked during development. Unknown or obscure assets were handled through a search fallback against CoinGecko. Empty messages were rejected before generation. When a live metric was unavailable or unsuitable, Alfred returned `N/A` rather than inventing a number. If the local model generated a response that omitted the required metric or used advice-like wording, the response guard redirected the final output to a deterministic fallback template.
 
@@ -581,11 +605,11 @@ For Research Question 1, the current verification results indicate that Alfred c
 
 For Research Question 2, the validation structure and draft participant results suggest that the Simple/Pro split is a useful design choice. However, this claim should only be treated as final once the real participant responses are inserted.
 
-For Research Question 3, the latency measurements show that a local Ollama-based architecture is feasible on the project machine. Even with the response guard in place, the tested prompt set remained comfortably below the 10-second threshold.
+For Research Question 3, the latency measurements show that a local Ollama-based architecture is feasible on the project machine. Even with the response guard in place, the tested prompt set remained comfortably below the 10-second threshold. The additional model comparison also showed that swapping to a smaller alternative model did not automatically produce a better outcome, which supports the decision to optimise the overall pipeline rather than chase model changes alone.
 
 ## 5.5 Limitations
 
-This evaluation has several limitations. First, the technical verification batches were small and focused on the project's supported intents. Second, the user study section still requires final participant data to be inserted. Third, the system depends on third-party APIs, which may change over time or return incomplete values. Fourth, the current implementation focuses on a constrained set of questions rather than the full space of cryptocurrency information needs.
+This evaluation has several limitations. First, the technical verification batches were small and focused on the project's supported intents. Second, the user study section still requires final participant data to be inserted. Third, the system depends on third-party APIs, which may change over time or return incomplete values. Fourth, the current implementation focuses on a constrained set of questions rather than the full space of cryptocurrency information needs. Fifth, the live model-comparison batch was partly affected by repeated API requests, which is why the controlled prompt comparison should be treated as the fairer direct comparison between models.
 
 These limitations do not invalidate the findings, but they define the scope of the project's claims. Alfred currently performs best as a constrained educational and market-information assistant rather than a general-purpose financial chatbot.
 
@@ -617,39 +641,7 @@ Overall, Alfred met the main aim of the project by showing that a carefully cons
 
 ## Appendix A: Gantt Chart Draft
 
-```mermaid
-gantt
-    title Alfred Project Plan
-    dateFormat  YYYY-MM-DD
-    axisFormat  %d %b
-
-    section Planning
-    Project proposal and topic definition     :done, p1, 2025-10-01, 2025-10-21
-    Literature collection and reading         :done, p2, 2025-10-22, 2025-11-20
-    Draft literature review                   :done, p3, 2025-11-21, 2025-12-05
-
-    section Design
-    Architecture and user-mode design         :done, d1, 2025-11-25, 2025-12-10
-    Preliminary report preparation            :done, d2, 2025-12-01, 2025-12-18
-
-    section Implementation
-    Flask backend scaffold                    :active, i1, 2026-03-19, 2026-03-22
-    Regex intent parser                       :active, i2, 2026-03-19, 2026-03-22
-    CoinGecko and DefiLlama integration       :active, i3, 2026-03-20, 2026-03-23
-    Ollama integration and prompt tuning      :active, i4, 2026-03-20, 2026-03-24
-    Frontend UI and mode switching            :active, i5, 2026-03-20, 2026-03-25
-
-    section Testing and Evaluation
-    Unit testing and edge-case checks         :i6, 2026-03-23, 2026-03-26
-    Latency measurement runs                  :i7, 2026-03-24, 2026-03-27
-    Novice and expert user testing            :i8, 2026-03-24, 2026-03-30
-    Evaluation chapter write-up               :i9, 2026-03-27, 2026-03-31
-
-    section Final Submission
-    Final report editing                      :f1, 2026-03-28, 2026-04-03
-    Demo video recording                      :f2, 2026-03-31, 2026-04-03
-    Final checks and submission               :f3, 2026-04-03, 2026-04-05
-```
+![Appendix Figure A1. Gantt chart showing the major planning, implementation, evaluation, and submission tasks for Alfred.](/Users/kjh/Downloads/CM3070/report_figures/gantt_chart.png)
 
 ## Appendix B: User Study Questionnaire
 
@@ -692,7 +684,15 @@ The model was hosted locally and Alfred accessed it through the Ollama API at `h
 
 - `evaluation_outputs/latency_results.csv`
 - `evaluation_outputs/consistency_results.csv`
+- `evaluation_outputs/llm_prompt_comparison.csv`
+- `evaluation_outputs/model_comparison_results.csv`
 - `logs/alfred_requests.jsonl`
+
+## Appendix E: Public Code Repository
+
+The public code repository for Alfred is available at:
+
+`https://github.com/kohjunhao/alfred-crypto-ai-companion`
 
 ---
 
@@ -709,3 +709,7 @@ The model was hosted locally and Alfred accessed it through the Ollama API at `h
 9. Raheman, F. et al. (2022) 'Social Media Sentiment and Cryptocurrency Volatility', *arXiv preprint* arXiv:2204.10185.
 10. Sert, D.B. (2025) *Mitigating LLM Hallucination in the Banking Domain*. Master's Thesis. Massachusetts Institute of Technology.
 11. TRM Labs (2026) *The 2026 Crypto Crime Report*.
+12. Lee, J., Stevens, N., Han, S.C. and Song, M. (2024) 'A Survey of Large Language Models in Finance (FinLLMs)', *arXiv preprint* arXiv:2402.02315.
+13. Sharma, C. (2025) 'Retrieval-Augmented Generation: A Comprehensive Survey of Architectures, Enhancements, and Robustness Frontiers', *arXiv preprint* arXiv:2506.00054.
+14. Grattafiori, A. et al. (2024) 'The Llama 3 Herd of Models', *arXiv preprint* arXiv:2407.21783.
+15. Qwen Team (2024) 'Qwen2.5 Technical Report', *arXiv preprint* arXiv:2412.15115.
