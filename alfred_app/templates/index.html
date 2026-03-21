@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Alfred: Your Crypto AI Companion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('alfred.static', filename='css/styles.css') }}">
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar" data-reveal>
+        <div class="topbar-brand">
+          <p class="section-label">LOCAL CRYPTO AI COMPANION</p>
+          <p class="brand-mark mono">ALFRED / CM3070</p>
+          <h1>Agentic RAG terminal for live crypto questions.</h1>
+          <p class="topbar-summary">
+            Alfred routes the query, fetches market data from CoinGecko and DefiLlama,
+            then returns a guarded answer in Simple or Pro mode.
+          </p>
+        </div>
+
+        <div class="topbar-controls">
+          <div class="mode-switch" id="mode-switch">
+            <button class="mode-button active" data-mode="SIMPLE">SIMPLE</button>
+            <button class="mode-button" data-mode="PRO">PRO</button>
+          </div>
+          <div class="status-inline">
+            <div class="status-chip">
+              <span class="meta-label">Runtime</span>
+              <span class="meta-value mono" id="health-mode">CHECKING</span>
+            </div>
+            <div class="status-chip">
+              <span class="meta-label">Ollama</span>
+              <span class="meta-value mono" id="health-ollama">CHECKING</span>
+            </div>
+            <div class="status-chip">
+              <span class="meta-label">Model</span>
+              <span class="meta-value mono" id="health-model">CHECKING</span>
+            </div>
+            <div class="status-chip">
+              <span class="meta-label">Focus</span>
+              <span class="meta-value mono">PRICE · TVL · GENERAL CHAT</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="prompt-ribbon" data-reveal>
+        <p class="section-label">QUICK QUERIES</p>
+        <div class="prompt-ribbon-track">
+          <button class="prompt-tab" data-prompt="What is the price of Bitcoin?">What is the price of Bitcoin?</button>
+          <button class="prompt-tab" data-prompt="Show me the TVL of Aave.">Show me the TVL of Aave.</button>
+          <button class="prompt-tab" data-prompt="How much is Solana worth right now?">How much is Solana worth right now?</button>
+          <button class="prompt-tab" data-prompt="What does TVL mean?">What does TVL mean?</button>
+        </div>
+      </section>
+
+      <main class="workspace">
+        <section class="terminal-shell" data-reveal>
+          <div class="terminal-head">
+            <div>
+              <p class="section-label">CHAT TERMINAL</p>
+              <h2>Live query workspace</h2>
+            </div>
+            <div class="terminal-meta">
+              <div>
+                <span class="meta-label">Last engine</span>
+                <span class="meta-value mono" id="engine-indicator">WAITING</span>
+              </div>
+              <div>
+                <span class="meta-label">Boundary</span>
+                <span class="meta-value">No trading. No wallet actions. No direct advice.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-log" id="chat-log">
+            <article class="message assistant">
+              <span class="message-role">ALFRED</span>
+              <div class="message-body">
+                Ask for a live price, a TVL check, or a short crypto explanation.
+              </div>
+            </article>
+          </div>
+
+          <form class="composer" id="chat-form">
+            <label class="sr-only" for="message">Message</label>
+            <textarea id="message" name="message" rows="3" placeholder="Ask Alfred about Bitcoin, Aave, Solana, TVL, or another supported market query."></textarea>
+            <div class="composer-footer">
+              <span class="composer-hint mono">ENTER TO SEND · SHIFT+ENTER FOR NEW LINE</span>
+              <button type="submit" class="send-button">SEND</button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="inspector" data-reveal>
+          <section class="inspector-section">
+            <div class="inspector-head">
+              <p class="section-label">DATA SNAPSHOT</p>
+              <h2>Latest retrieved metrics</h2>
+            </div>
+            <div id="data-snapshot" class="inspector-empty">
+              No live asset data has been retrieved yet.
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="inspector-head">
+              <p class="section-label">RUN DIAGNOSTICS</p>
+              <h2>Timing breakdown</h2>
+            </div>
+            <div id="timing-grid" class="inspector-empty">
+              No request timings recorded yet.
+            </div>
+          </section>
+
+          <section class="inspector-section">
+            <div class="inspector-head">
+              <p class="section-label">OPERATING NOTES</p>
+              <h2>How Alfred behaves</h2>
+            </div>
+            <ul class="inspector-list">
+              <li>Simple Mode uses shorter plain-English explanations.</li>
+              <li>Pro Mode prioritises tables and compact market detail.</li>
+              <li>If the model output is weak, Alfred switches to safe fallback formatting.</li>
+            </ul>
+          </section>
+
+          <section class="inspector-section warning-section hidden" id="warning-shell">
+            <div class="inspector-head">
+              <p class="section-label">GUARDRAIL NOTES</p>
+              <h2>System warnings</h2>
+            </div>
+            <div id="warning-box" class="warning-box"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="{{ url_for('alfred.static', filename='js/app.js') }}"></script>
+  </body>
+</html>
