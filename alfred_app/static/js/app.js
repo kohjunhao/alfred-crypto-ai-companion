@@ -2,6 +2,7 @@ const chatForm = document.getElementById("chat-form");
 const messageInput = document.getElementById("message");
 const chatLog = document.getElementById("chat-log");
 const engineIndicator = document.getElementById("engine-indicator");
+const modeStatusLine = document.getElementById("mode-status-line");
 const snapshotRoot = document.getElementById("data-snapshot");
 const warningBox = document.getElementById("warning-box");
 const warningShell = document.getElementById("warning-shell");
@@ -19,6 +20,7 @@ function setMode(mode) {
   modeButtons.forEach((button) => {
     button.classList.toggle("active", button.dataset.mode === mode);
   });
+  modeStatusLine.textContent = `TERMINAL MODE · ${mode}`;
 }
 
 function escapeHtml(text) {
@@ -217,4 +219,5 @@ const observer = new IntersectionObserver(
 );
 
 revealNodes.forEach((node) => observer.observe(node));
+setMode(activeMode);
 loadHealth();

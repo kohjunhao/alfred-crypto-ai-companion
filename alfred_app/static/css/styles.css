@@ -228,6 +228,15 @@ textarea {
   text-align: right;
 }
 
+.terminal-status-line {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--soft-line);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
 .chat-log {
   display: grid;
   gap: 12px;
