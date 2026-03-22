@@ -5,7 +5,6 @@ const engineIndicator = document.getElementById("engine-indicator");
 const snapshotRoot = document.getElementById("data-snapshot");
 const warningBox = document.getElementById("warning-box");
 const warningShell = document.getElementById("warning-shell");
-const timingGrid = document.getElementById("timing-grid");
 const healthMode = document.getElementById("health-mode");
 const healthOllama = document.getElementById("health-ollama");
 const healthModel = document.getElementById("health-model");
@@ -130,33 +129,6 @@ function renderWarnings(warnings) {
   warningBox.innerHTML = warnings.map((warning) => `<div>${escapeHtml(warning)}</div>`).join("");
 }
 
-function renderTimings(timings) {
-  if (!timings) {
-    timingGrid.className = "inspector-empty";
-    timingGrid.textContent = "No request timings recorded yet.";
-    return;
-  }
-
-  const cards = [
-    ["Parse", `${timings.parse_ms} ms`],
-    ["Data Fetch", `${timings.data_fetch_ms} ms`],
-    ["LLM", `${timings.llm_ms} ms`],
-    ["Total", `${timings.total_ms} ms`],
-  ];
-
-  timingGrid.className = "ledger-grid";
-  timingGrid.innerHTML = cards
-    .map(
-      ([label, value]) => `
-        <div class="metric-row">
-          <span class="meta-label">${label}</span>
-          <span class="meta-value">${escapeHtml(value)}</span>
-        </div>
-      `
-    )
-    .join("");
-}
-
 async function loadHealth() {
   try {
     const response = await fetch("/api/health");
@@ -196,7 +168,6 @@ async function sendMessage(message) {
     engineIndicator.textContent = `${payload.engine.toUpperCase()} · ${payload.model}${reasonText}`;
     renderMetrics(payload.metrics);
     renderWarnings(payload.warnings);
-    renderTimings(payload.timings);
   } catch (error) {
     loadingMessage.remove();
     addMessage("assistant", `Alfred hit an error: ${error.message}`);

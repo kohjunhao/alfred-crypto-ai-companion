@@ -102,7 +102,6 @@ textarea {
   text-transform: uppercase;
 }
 
-.topbar-summary,
 .inspector-empty,
 .message-body,
 .warning-box,
@@ -110,11 +109,6 @@ textarea {
   color: var(--muted);
   line-height: 1.75;
   font-size: 0.95rem;
-}
-
-.topbar-summary {
-  max-width: 58ch;
-  margin: 12px 0 0;
 }
 
 .topbar-controls {
@@ -230,7 +224,7 @@ textarea {
 .terminal-meta {
   display: grid;
   gap: 8px;
-  max-width: 320px;
+  min-width: 190px;
   text-align: right;
 }
 
