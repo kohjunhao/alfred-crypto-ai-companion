@@ -1,9 +1,0 @@
-model,fixture,mode,intent,engine,reason,expected_value,reply_contains_expected_value,elapsed_ms
-llama3,bitcoin_price_pro,PRO,price,fallback,guardrail_rejected,"$70,525",True,2714.29
-llama3,ethereum_price_simple,SIMPLE,price,fallback,guardrail_rejected,"$2,149",True,2386.12
-llama3,aave_tvl_pro,PRO,tvl,fallback,guardrail_rejected,$25.19B,True,2663.83
-llama3,uniswap_tvl_pro,PRO,tvl,fallback,guardrail_rejected,$1.70B,True,2321.21
-qwen2.5:3b,bitcoin_price_pro,PRO,price,fallback,guardrail_rejected,"$70,525",True,1976.27
-qwen2.5:3b,ethereum_price_simple,SIMPLE,price,ollama,ollama_success,"$2,149",True,1215.83
-qwen2.5:3b,aave_tvl_pro,PRO,tvl,fallback,guardrail_rejected,$25.19B,True,7089.34
-qwen2.5:3b,uniswap_tvl_pro,PRO,tvl,fallback,guardrail_rejected,$1.70B,True,1629.58

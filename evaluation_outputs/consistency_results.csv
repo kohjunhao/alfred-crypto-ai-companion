@@ -1,6 +1,0 @@
-mode,prompt,engine,intent,metric_checked,expected_value,reply_contains_expected_value
-SIMPLE,What is the price of Bitcoin right now?,fallback,price,price_usd,"$70,840",True
-PRO,What is the price of Ethereum right now?,fallback,price,price_usd,"$2,151",True
-SIMPLE,How much is Solana worth right now?,fallback,price,price_usd,$89.31,True
-PRO,Show me the TVL of Aave.,fallback,tvl,tvl_usd,$23.99B,True
-PRO,Show me the TVL of Uniswap.,fallback,tvl,tvl_usd,$1.72B,True

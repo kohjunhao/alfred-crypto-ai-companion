@@ -1,7 +1,0 @@
-mode,prompt,engine,intent,entity,parse_ms,data_fetch_ms,llm_ms,total_ms
-PRO,What is the price of Bitcoin right now?,fallback,price,bitcoin,0.04,562.39,1844.89,2407.37
-SIMPLE,What is the price of Ethereum right now?,ollama,price,ethereum,0.05,33.05,1916.78,1949.95
-PRO,Show me the TVL of Aave.,fallback,tvl,aave,0.04,27.03,2276.49,2303.64
-SIMPLE,How much is Solana worth right now?,ollama,price,solana,0.05,33.05,1955.08,1988.25
-PRO,Show me the TVL of Uniswap.,fallback,tvl,uniswap,0.03,32.85,2173.25,2206.21
-SIMPLE,What does TVL mean?,ollama,tvl,,0.32,0.0,1361.72,1362.17
