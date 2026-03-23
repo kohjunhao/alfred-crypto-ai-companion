@@ -78,26 +78,19 @@ textarea {
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(440px, 0.95fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
   align-items: end;
-  padding: 22px 0 18px;
+  padding: 22px 0 16px;
   border-top: 2px solid var(--line);
   border-bottom: 2px solid var(--line);
 }
 
-.brand-mark {
-  margin: 0 0 8px;
-  font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-}
-
 .topbar h1 {
   margin: 0;
-  max-width: 13ch;
-  font-size: clamp(2rem, 4.4vw, 3.9rem);
-  line-height: 0.92;
+  max-width: 12ch;
+  font-size: clamp(2.2rem, 4.5vw, 4.1rem);
+  line-height: 0.94;
   letter-spacing: -0.05em;
   text-transform: uppercase;
 }
@@ -112,9 +105,9 @@ textarea {
 }
 
 .topbar-controls {
-  display: grid;
-  gap: 14px;
-  justify-items: end;
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
 }
 
 .mode-switch {
@@ -149,19 +142,6 @@ textarea {
 .mode-button.active {
   background: var(--gold);
   font-weight: 700;
-}
-
-.status-inline {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  width: 100%;
-}
-
-.status-chip {
-  padding: 10px 12px;
-  border: 2px solid var(--soft-line);
-  background: rgba(255, 255, 255, 0.55);
 }
 
 .prompt-ribbon {
@@ -452,7 +432,7 @@ textarea {
   }
 
   .topbar-controls {
-    justify-items: stretch;
+    justify-content: flex-start;
   }
 
   .terminal-shell {
@@ -482,10 +462,6 @@ textarea {
   .terminal-meta {
     max-width: none;
     text-align: left;
-  }
-
-  .status-inline {
-    grid-template-columns: 1fr;
   }
 
   .metric-row {

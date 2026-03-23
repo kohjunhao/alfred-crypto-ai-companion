@@ -6,9 +6,6 @@ const modeStatusLine = document.getElementById("mode-status-line");
 const snapshotRoot = document.getElementById("data-snapshot");
 const warningBox = document.getElementById("warning-box");
 const warningShell = document.getElementById("warning-shell");
-const healthMode = document.getElementById("health-mode");
-const healthOllama = document.getElementById("health-ollama");
-const healthModel = document.getElementById("health-model");
 const modeButtons = [...document.querySelectorAll(".mode-button")];
 const promptButtons = [...document.querySelectorAll(".prompt-tab")];
 const revealNodes = [...document.querySelectorAll("[data-reveal]")];
@@ -131,20 +128,6 @@ function renderWarnings(warnings) {
   warningBox.innerHTML = warnings.map((warning) => `<div>${escapeHtml(warning)}</div>`).join("");
 }
 
-async function loadHealth() {
-  try {
-    const response = await fetch("/api/health");
-    const payload = await response.json();
-    healthMode.textContent = payload.mode === "ollama-or-fallback" ? "OLLAMA + FALLBACK" : "FALLBACK ONLY";
-    healthOllama.textContent = payload.ollama_ready ? "READY" : "NOT READY";
-    healthModel.textContent = payload.ollama_model || "N/A";
-  } catch (error) {
-    healthMode.textContent = "UNAVAILABLE";
-    healthOllama.textContent = "UNAVAILABLE";
-    healthModel.textContent = "UNAVAILABLE";
-  }
-}
-
 async function sendMessage(message) {
   addMessage("user", message);
   addMessage("assistant", "Routing the request, checking live data, and preparing the final answer.");
@@ -220,4 +203,3 @@ const observer = new IntersectionObserver(
 
 revealNodes.forEach((node) => observer.observe(node));
 setMode(activeMode);
-loadHealth();
